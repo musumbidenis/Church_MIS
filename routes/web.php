@@ -1,6 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MembersController;
+use App\Http\Controllers\GroupsController;
+use App\Http\Controllers\LeadersController;
+use App\Http\Controllers\EventsController;
+use App\Http\Controllers\ContributionTypesController;
+use App\Http\Controllers\ContributionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +22,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+/** Admin Section Routes */
+Route::resource('/members', MembersController::class);
+Route::resource('/groups', GroupsController::class);
+Route::resource('/leaders', LeadersController::class);
+Route::resource('/events', EventsController::class);
+Route::resource('/contributionTypes', ContributionTypesController::class);
+Route::resource('/contributions', ContributionsController::class);

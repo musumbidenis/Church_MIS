@@ -9,22 +9,18 @@
     <meta content="Coderthemes" name="author" />
 
     <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/logo.png">
-
-    <!-- Daterangepicker css -->
-    <link rel="stylesheet" href="assets/vendor/daterangepicker/daterangepicker.css">
-
-    <!-- Vector Map css -->
-    <link rel="stylesheet" href="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.css">
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo.png') }}">
 
     <!-- Theme Config Js -->
-    <script src="assets/js/config.js"></script>
+    <script src="{{ asset('assets/js/config.js') }}"></script>
 
     <!-- App css -->
-    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="app-style" />
 
     <!-- Icons css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+
+    @yield('css')
 </head>
 
 <body>
@@ -50,26 +46,11 @@
     <!-- END wrapper -->
 
     <!-- Vendor js -->
-    <script src="assets/js/vendor.min.js"></script>
-
-    <!-- Daterangepicker js -->
-    <script src="assets/vendor/daterangepicker/moment.min.js"></script>
-    <script src="assets/vendor/daterangepicker/daterangepicker.js"></script>
-
-    <!-- Apex Charts js -->
-    <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-
-    <!-- Vector Map js -->
-    <script src="assets/vendor/admin-resources/jquery.vectormap/jquery-jvectormap-1.2.2.min.js"></script>
-    <script src="assets/vendor/admin-resources/jquery.vectormap/maps/jquery-jvectormap-world-mill-en.js"></script>
-
-    <!-- Dashboard App js -->
-    <script src="assets/js/pages/demo.dashboard.js"></script>
+    <script src="{{ asset('assets/js/vendor.min.js') }}"></script>
 
     <!-- App js -->
-    <script src="assets/js/app.min.js"></script>
+    <script src="{{ asset('assets/js/app.min.js') }}"></script>
 
-    <!-- Additional js -->
     @yield('scripts')
 
 </body>

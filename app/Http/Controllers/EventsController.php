@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class MembersController extends Controller
+class EventsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,7 +26,7 @@ class MembersController extends Controller
      */
     public function create()
     {
-        return view('dashboard.NewMember');
+        return view('dashboard.NewEvent');
     }
 
     /**
@@ -34,7 +37,33 @@ class MembersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Validate the form input fields
+        $validator = Validator::make($request->all(), [
+            'eventName' => 'required',
+            'eventDate' => 'required',
+            'location' => 'required',
+            'eventDescription' => 'required',
+        ]);
+
+        //Alert the user of the input error
+        if ($validator->fails()) {
+            toastr()->error($validator->messages()->all()[0], 'Oops!');
+            return back();
+        } else {
+            //Save the input data to database
+            $event = new Event();
+            $event->eventName = $request->eventName;
+            $event->eventDate = Carbon::createFromFormat('m/d/Y', $request->eventDate)->format('Y-m-d');
+            $event->location = $request->location;
+            $event->description = $request->eventDescription;
+
+            $event->save();
+
+            //Success message
+            toastr()->success('Event added successfully!', 'Success!');
+
+            return back();
+        }
     }
 
     /**

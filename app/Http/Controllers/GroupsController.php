@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class MembersController extends Controller
+class GroupsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,7 +25,7 @@ class MembersController extends Controller
      */
     public function create()
     {
-        return view('dashboard.NewMember');
+        return view('dashboard.newGroup');
     }
 
     /**
@@ -34,7 +36,30 @@ class MembersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Validate the form input fields
+        $validator = Validator::make($request->all(), [
+            'groupName' => 'required|unique:groups',
+            'groupDescription' => 'required',
+        ]);
+
+        //Alert the user of the input error
+        if ($validator->fails()) {
+            toastr()->error($validator->messages()->all()[0], 'Oops!');
+            return back();
+        } else {
+            
+            //Save the input data to database
+            $group = new Group();
+            $group->groupName = $request->groupName;
+            $group->description = $request->groupDescription;
+
+            $group->save();
+
+            //Success message
+            toastr()->success('Group added successfully!', 'Success!');
+
+            return back();
+        }
     }
 
     /**

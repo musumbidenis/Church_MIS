@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class MembersController extends Controller
+class DashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -23,7 +23,7 @@ class MembersController extends Controller
      */
     public function create()
     {
-        return view('dashboard.NewMember');
+        //
     }
 
     /**
