@@ -7,6 +7,13 @@
 
             <div class="row">
                 <div class="col-12">
+                    <div class="bg-flower">
+                        <img src="{{ asset('assets/images/flowers/img-3.png') }}">
+                    </div>
+
+                    <div class="bg-flower-2">
+                        <img src="{{ asset('assets/images/flowers/img-1.png') }}">
+                    </div>
 
                     <div class="page-title-box">
                         <div class="page-title-right">
