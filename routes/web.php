@@ -7,6 +7,7 @@ use App\Http\Controllers\LeadersController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\ContributionTypesController;
 use App\Http\Controllers\ContributionsController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,15 @@ use App\Http\Controllers\ContributionsController;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Auth routes
+Route::prefix('auth')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('auth.showLoginForm');
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+
+    Route::get('/passwordChange', [AuthController::class, 'showPasswordChangeForm'])->name('auth.showPasswordChangeForm');
+    Route::post('/passwordChange', [AuthController::class, 'passwordChange'])->name('auth.passwordChange');
 });
 
 /** Admin Section Routes */
