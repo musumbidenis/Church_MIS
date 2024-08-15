@@ -8,20 +8,20 @@
                 <!-- Logo light -->
                 <a href="" class="logo-light">
                     <span class="logo-lg">
-                        <img src="{{asset('assets/images/logo.png')}}" alt="logo">
+                        <img src="{{ asset('assets/images/logo.png') }}" alt="logo">
                     </span>
                     <span class="logo-sm">
-                        <img src="{{asset('assets/images/logo.png')}}" alt="small logo">
+                        <img src="{{ asset('assets/images/logo.png') }}" alt="small logo">
                     </span>
                 </a>
 
                 <!-- Logo Dark -->
                 <a href="" class="logo-dark">
                     <span class="logo-lg">
-                        <img src="{{asset('assets/images/logo.png')}}" alt="dark logo">
+                        <img src="{{ asset('assets/images/logo.png') }}" alt="dark logo">
                     </span>
                     <span class="logo-sm">
-                        <img src="{{asset('assets/images/logo.png')}}" alt="small logo">
+                        <img src="{{ asset('assets/images/logo.png') }}" alt="small logo">
                     </span>
                 </a>
             </div>
@@ -36,8 +36,8 @@
         <ul class="topbar-menu d-flex align-items-center gap-3">
 
             <li class="dropdown notification-list">
-                <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#"
-                    role="button" aria-haspopup="false" aria-expanded="false">
+                <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button"
+                    aria-haspopup="false" aria-expanded="false">
                     <i class="ri-notification-3-line fs-22"></i>
                     <span class="noti-icon-badge"></span>
                 </a>
@@ -59,14 +59,14 @@
 
                         <!-- Notification Date -->
                         <h5 class="text-muted fs-12 fw-bold p-2 text-uppercase mb-0">Today</h5>
-                        
-                        
+
+
                         <!-- Notification item-->
                         <a href="javascript:void(0);"
                             class="dropdown-item my-2 mx-2 notify-item unread-noti card m-0 shadow-none">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
-                                    
+
                                     <div class="flex-grow-1 text-truncate ms-2">
                                         <h5 class="noti-item-title fw-semibold fs-14">Datacorp <small
                                                 class="fw-normal text-muted float-end ms-1">1 min ago</small></h5>
@@ -97,17 +97,23 @@
 
             <!-- User avatar -->
             <li class="dropdown">
-                <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown"
-                    href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#"
+                    role="button" aria-haspopup="false" aria-expanded="false">
                     <span class="account-user-avatar">
-                        <img src="{{asset('assets/images/users/avatar-1.jpg')}}" alt="user-image" width="32"
-                            class="rounded-circle">
+                        <!-- Generate avatar from initials using UI Avatars API -->
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->surname) }}+{{ urlencode(Auth::user()->firstName) }}&background=random&color=fff&size=32"
+                            alt="user-image" width="32" class="rounded-circle">
                     </span>
                     <span class="d-lg-flex flex-column gap-1 d-none">
-                        <h5 class="my-0">Surname Fname</h5>
-                        <h6 class="my-0 fw-normal">Role</h6>
+                        <!-- Display the user's full name and role -->
+                        <h5 class="my-0">{{ Auth::user()->surname }} {{ Auth::user()->firstName }}</h5>
+                        <h6 class="my-0 fw-normal">
+                            {{ Auth::user()->role == 0 ? 'Member' : 'Administrator' }}
+                        </h6>
                     </span>
                 </a>
+
+
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">
 
                     <!-- item-->
@@ -135,7 +141,13 @@
                     </a>
 
                     <!-- item-->
-                    <a href="#" class="dropdown-item">
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                        @method('POST')
+                    </form>
+
+                    <a href="#" class="dropdown-item"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="ri-logout-box-line fs-18 align-middle me-1"></i>
                         <span>Logout</span>
                     </a>

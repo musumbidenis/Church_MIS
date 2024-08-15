@@ -31,6 +31,8 @@ Route::prefix('auth')->group(function () {
 
     Route::get('/passwordChange', [AuthController::class, 'showPasswordChangeForm'])->name('auth.showPasswordChangeForm');
     Route::post('/passwordChange', [AuthController::class, 'passwordChange'])->name('auth.passwordChange');
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 /** Admin Section Routes */

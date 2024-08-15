@@ -39,63 +39,113 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        //Validate the form input fields
+        // Validate the form input fields
         $validator = Validator::make($request->all(), [
             'emailPhone' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        //Alert the user of the input error
+        // Alert the user of the input error
         if ($validator->fails()) {
             toastr()->error($validator->messages()->all()[0], 'Oops!');
             return back();
-        } else {
-            // Get the credentials from the request
-            $emailPhone = $request->input('emailPhone');
-            $password = $request->input('password');
+        }
 
-            // Check if the input is an email or phone number
-            if (filter_var($emailPhone, FILTER_VALIDATE_EMAIL)) {
-                // Attempt to find the user by email
-                $user = DB::table('users')->where('email', $emailPhone)->first();
-            } else {
-                // Attempt to find the user by phone number
-                $user = DB::table('users')->where('telephone', $emailPhone)->first();
-            }
+        // Get the credentials from the request
+        $emailPhone = $request->input('emailPhone');
+        $password = $request->input('password');
 
-            // If the user is found
-            if ($user) {
-                // Check if the inputted password matches the user's phone number
+        // Determine if the input is an email or phone number and find the user
+        $user = filter_var($emailPhone, FILTER_VALIDATE_EMAIL) ? DB::table('users')->where('email', $emailPhone)->first() : DB::table('users')->where('telephone', $emailPhone)->first();
+
+        // If the user is found
+        if ($user) {
+            // Check if the inputted password matches the user's phone number (default password)
+            if (Hash::check($password, $user->password)) {
+                // Log the user in
+                Auth::loginUsingId($user->memberID);
+
+                // Check if the user used the default password
                 if ($password === $user->telephone) {
-                    // Log the user in temporarily
-                    Auth::loginUsingId($user->memberID);
-
-                    //Success message
-                    toastr()->warning('Kindly reset your password!', 'warning!');
-
                     // Redirect to the password change page
+                    toastr()->warning('Kindly reset your password!', 'Warning!');
                     return redirect('auth/passwordChange');
-
-                    // If the password matches the one stored in the database
-                } elseif (Hash::check($password, $user->password)) {
-                    // Log the user in
-                    Auth::loginUsingId($user->memberID);
-
-                    //Success message
-                    toastr()->success('Logged in successfully!', 'Success!');
-
-                    // Redirect to the intended page
-                    return redirect('/');
-                } else {
-                    //Error message
-                    toastr()->error('Invalid login credentials. Please try again!', 'Error!');
-
-                    // Redirect to the intended page
-                    return back();
                 }
+
+                // If the password is not the default, redirect to the home page
+                toastr()->success('Logged in successfully!', 'Success!');
+                return redirect('/');
+            } else {
+                // Error message for invalid credentials
+                toastr()->error('Invalid login credentials. Please try again!', 'Error!');
+                return back();
             }
+        } else {
+            // Error message for user not found
+            toastr()->error('User not found. Please check your credentials and try again!', 'Error!');
+            return back();
         }
     }
+
+    // public function login(Request $request)
+    // {
+    //     //Validate the form input fields
+    //     $validator = Validator::make($request->all(), [
+    //         'emailPhone' => 'required|string',
+    //         'password' => 'required|string',
+    //     ]);
+
+    //     //Alert the user of the input error
+    //     if ($validator->fails()) {
+    //         toastr()->error($validator->messages()->all()[0], 'Oops!');
+    //         return back();
+    //     } else {
+    //         // Get the credentials from the request
+    //         $emailPhone = $request->input('emailPhone');
+    //         $password = $request->input('password');
+
+    //         // Check if the input is an email or phone number
+    //         if (filter_var($emailPhone, FILTER_VALIDATE_EMAIL)) {
+    //             // Attempt to find the user by email
+    //             $user = DB::table('users')->where('email', $emailPhone)->first();
+    //         } else {
+    //             // Attempt to find the user by phone number
+    //             $user = DB::table('users')->where('telephone', $emailPhone)->first();
+    //         }
+
+    //         // If the user is found
+    //         if ($user) {
+    //             // Check if the inputted password matches the user's phone number
+    //             if ($password === $user->telephone) {
+    //                 // Log the user in temporarily
+    //                 Auth::loginUsingId($user->memberID);
+
+    //                 //Success message
+    //                 toastr()->warning('Kindly reset your password!', 'warning!');
+
+    //                 // Redirect to the password change page
+    //                 return redirect('auth/passwordChange');
+
+    //                 // If the password matches the one stored in the database
+    //             } elseif (Hash::check($password, $user->password)) {
+    //                 // Log the user in
+    //                 Auth::loginUsingId($user->memberID);
+
+    //                 //Success message
+    //                 toastr()->success('Logged in successfully!', 'Success!');
+
+    //                 // Redirect to the intended page
+    //                 return redirect('/');
+    //             } else {
+    //                 //Error message
+    //                 toastr()->error('Invalid login credentials. Please try again!', 'Error!');
+
+    //                 // Redirect to the intended page
+    //                 return back();
+    //             }
+    //         }
+    //     }
+    // }
 
     /**
      * Change password for the user.
@@ -120,7 +170,7 @@ class AuthController extends Controller
 
             // Update the password in the Members table
             DB::table('Members')
-                ->where('memberID', $user->memmberID)
+                ->where('memberID', $user->memberID)
                 ->update(['password' => Hash::make($request->input('password'))]);
 
             // Log the user in again to refresh their session
@@ -128,9 +178,30 @@ class AuthController extends Controller
 
             //Success message
             toastr()->success('Password changed successfully!', 'Success!');
-            
+
             // Redirect to the intended page or home with a success message
             return redirect('/');
         }
+    }
+
+    /**
+     * Logout the user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request)
+    {
+        // Log out the user
+        Auth::logout();
+
+        // Invalidate the session
+        $request->session()->invalidate();
+
+        // Regenerate the CSRF token
+        $request->session()->regenerateToken();
+
+        // Redirect to the home page or login page
+        return redirect('auth/login');
     }
 }
