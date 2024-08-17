@@ -97,7 +97,7 @@
 
             <!-- User avatar -->
             <li class="dropdown">
-                <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#"
+                {{-- <a class="nav-link dropdown-toggle arrow-none nav-user px-2" data-bs-toggle="dropdown" href="#"
                     role="button" aria-haspopup="false" aria-expanded="false">
                     <span class="account-user-avatar">
                         <!-- Generate avatar from initials using UI Avatars API -->
@@ -111,7 +111,7 @@
                             {{ Auth::user()->role == 0 ? 'Member' : 'Administrator' }}
                         </h6>
                     </span>
-                </a>
+                </a> --}}
 
 
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated profile-dropdown">

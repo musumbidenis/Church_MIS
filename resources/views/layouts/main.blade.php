@@ -44,6 +44,12 @@
     </div>
     <!-- END wrapper -->
 
+    <!-- Sweetalert2 -->
+    @include('sweetalert::alert')
+
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- Vendor js -->
     <script src="{{ asset('assets/js/vendor.min.js') }}"></script>
 

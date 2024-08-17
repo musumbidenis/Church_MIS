@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Alert;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,8 +48,9 @@ class AuthController extends Controller
 
         // Alert the user of the input error
         if ($validator->fails()) {
-            toastr()->error($validator->messages()->all()[0], 'Oops!');
-            return back();
+            return back()
+                ->with('toast_error', $validator->messages()->all()[0])
+                ->withInput();
         }
 
         // Get the credentials from the request
@@ -68,22 +70,18 @@ class AuthController extends Controller
                 // Check if the user used the default password
                 if ($password === $user->telephone) {
                     // Redirect to the password change page
-                    toastr()->warning('Kindly reset your password!', 'Warning!');
-                    return redirect('auth/passwordChange');
+                    return redirect('auth/passwordChange')->with('toast_warning', 'Kindly reset your password!');
                 }
 
                 // If the password is not the default, redirect to the home page
-                toastr()->success('Logged in successfully!', 'Success!');
-                return redirect('/');
+                return redirect('/')->with('toast_success', 'Logged in succesfully!');
             } else {
                 // Error message for invalid credentials
-                toastr()->error('Invalid login credentials. Please try again!', 'Error!');
-                return back();
+                return back()->with('toast_error', 'Invalid login credentials. Please try again!');
             }
         } else {
             // Error message for user not found
-            toastr()->error('User not found. Please check your credentials and try again!', 'Error!');
-            return back();
+            return back()->with('toast_error', 'User not found. Please check your credentials and try again!');
         }
     }
 
@@ -162,8 +160,9 @@ class AuthController extends Controller
 
         //Alert the user of the input error
         if ($validator->fails()) {
-            toastr()->error($validator->messages()->all()[0], 'Oops!');
-            return back();
+            return back()
+                ->with('toast_error', $validator->messages()->all()[0])
+                ->withInput();
         } else {
             // Get the currently authenticated user
             $user = Auth::user();
@@ -176,11 +175,8 @@ class AuthController extends Controller
             // Log the user in again to refresh their session
             Auth::login($user);
 
-            //Success message
-            toastr()->success('Password changed successfully!', 'Success!');
-
             // Redirect to the intended page or home with a success message
-            return redirect('/');
+            return redirect('/')->with('toast_success', 'Password changed successfully!');
         }
     }
 

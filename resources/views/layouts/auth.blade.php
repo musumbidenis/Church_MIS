@@ -30,6 +30,9 @@
     </div>
     <!-- end page -->
 
+    <!-- Sweetalert2 -->
+    @include('sweetalert::alert')
+
     <footer class="footer footer-alt fw-medium">
         <span class="bg-body">
             <script>

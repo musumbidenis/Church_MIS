@@ -4,11 +4,8 @@
     <link href="{{ asset('assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}" rel="stylesheet"
         type="text/css" />
 
-    <!-- Toastr css -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
-
-    <!-- Choices CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endsection
 @section('content')
     <div class="content">
@@ -290,9 +287,6 @@
     </div> <!-- content -->
 @endsection
 @section('scripts')
-    <!-- JQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <!-- Bootstrap Wizard Form js -->
     <script src="{{ asset('assets/vendor/twitter-bootstrap-wizard/jquery.bootstrap.wizard.min.js') }}"></script>
 
@@ -302,8 +296,8 @@
     <!-- Bootstrap Datepicker Plugin js -->
     <script src="{{ asset('assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
 
-    <!-- Toastr js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>>
 
     <!-- Tagify js -->
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
@@ -327,10 +321,6 @@
                     closeOnSelect: false // <- do not hide the suggestions dropdown once an item has been selected
                 }
             });
-
-            // Toastr notifications
-            @if (session('success')) toastr.success('{{ session('success') }}'); @endif
-            @if (session('error')) toastr.error('{{ session('error') }}'); @endif
 
             // Function to get combined form data
             function getCombinedFormData() {
@@ -385,20 +375,60 @@
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            // Redirect or refresh the page to show the success message
-                            location.reload();
+                            if (response.status === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: response.message,
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                }).then(() => {
+                                    location
+                                .reload(); // Reload the page after showing the success toast
+                                });
+                            }
                         },
-                        error: function(xhr, status, error) {
-                            // Error message
-                            console.error('Error submitting form');
-                            console.error(xhr.responseText);
+                        error: function(xhr) {
+                            let errorMessage = 'An unexpected error occurred.';
+
+                            // Check if it's a validation error
+                            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON
+                                .message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                // General error message from the server
+                                errorMessage = xhr.responseJSON.message;
+                            }
+
+                            // Show error message
+                            Swal.fire({
+                                icon: 'error',
+                                title: errorMessage,
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                            });
                         }
                     });
                 } else {
                     // Alert the user to fill the required fields
-                    toastr.error('Please fill all required fields before submitting.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Please fill all required fields before submitting!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 6000,
+                        timerProgressBar: true,
+                    });
+
                 }
             });
         });
     </script>
+@endsection
 @endsection
